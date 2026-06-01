@@ -3,7 +3,7 @@ import { getPage } from './browser';
 import { OperationResult } from './types';
 import { saveAmazonSession } from './session-manager';
 
-const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.com';
+const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.co.uk';
 const WHOLEFOODS_STOREFRONT = `https://www.${AMAZON_DOMAIN}/alm/storefront?almBrandId=VUZHIFdob2xlIEZvb2Rz`;
 const WHOLEFOODS_CART = `https://www.${AMAZON_DOMAIN}/cart/localmarket?almBrandId=VUZHIFdob2xlIEZvb2Rz`;
 

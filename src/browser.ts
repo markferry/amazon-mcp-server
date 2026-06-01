@@ -66,7 +66,7 @@ export async function getBrowser(): Promise<Browser> {
       // Check if we have existing Amazon cookies
       const client = await page.target().createCDPSession();
       const { cookies } = await client.send('Network.getCookies', {
-        urls: ['https://www.amazon.com'],
+        urls: ['https://www.amazon.co.uk'],
       });
       await client.detach();
 

@@ -265,7 +265,7 @@ app.listen(PORT, async () => {
   try {
     await getBrowser();
     const page = await getPage();
-    const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.com';
+    const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.co.uk';
 
     const restored = await restoreAmazonSession(page);
     await page.goto(`https://www.${AMAZON_DOMAIN}`, { waitUntil: 'networkidle2' });

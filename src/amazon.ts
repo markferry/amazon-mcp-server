@@ -3,7 +3,7 @@ import { getPage } from './browser';
 import { AddToCartParams, CartItem, SearchResult, OperationResult } from './types';
 import { saveAmazonSession } from './session-manager';
 
-const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.com';
+const AMAZON_DOMAIN = process.env.AMAZON_DOMAIN || 'amazon.co.uk';
 const BASE_URL = `https://www.${AMAZON_DOMAIN}`;
 
 async function waitForElement(page: Page, selector: string, timeout = 5000): Promise<boolean> {
