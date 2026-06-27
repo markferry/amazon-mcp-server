@@ -16,6 +16,30 @@ async function waitForElement(page: Page, selector: string, timeout = 8000): Pro
   }
 }
 
+// Submit the search form. Amazon has shipped several DOM variants over the years
+// (the submit button has been #nav-search-submit-button, a .nav-search-submit
+// input, etc.), so try a few selectors and fall back to submitting the form
+// directly via Enter.
+async function submitSearch(page: Page): Promise<void> {
+  const submitSelectors = [
+    '#nav-search-submit-button',
+    '#nav-search-submit-text input[type="submit"]',
+    '.nav-search-submit input[type="submit"]',
+    'form[name="site-search"] input[type="submit"]',
+  ];
+
+  for (const selector of submitSelectors) {
+    const btn = await page.$(selector);
+    if (btn) {
+      await btn.click();
+      return;
+    }
+  }
+
+  await page.focus('#twotabsearchtextbox');
+  await page.keyboard.press('Enter');
+}
+
 /**
  * Ensure we're on the Whole Foods storefront, handling any zip code / address prompts.
  */
@@ -49,7 +73,7 @@ export async function searchWholeFoods(query: string): Promise<OperationResult> 
     // Clear existing text and type new query
     await page.click('#twotabsearchtextbox', { clickCount: 3 });
     await page.type('#twotabsearchtextbox', query);
-    await page.click('#nav-search-submit-button');
+    await submitSearch(page);
 
     // Wait for results
     const hasResults = await waitForElement(page, '[data-component-type="s-search-result"], .s-result-item, [data-asin]', 10000);
@@ -123,7 +147,7 @@ export async function addToWholeFoodsCart(params: { query?: string; asin?: strin
 
       await page.click('#twotabsearchtextbox', { clickCount: 3 });
       await page.type('#twotabsearchtextbox', params.query);
-      await page.click('#nav-search-submit-button');
+      await submitSearch(page);
 
       // Wait for results and click first one
       const hasResults = await waitForElement(page, '[data-component-type="s-search-result"] h2 a, [data-asin] h2 a', 10000);

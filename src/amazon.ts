@@ -15,6 +15,28 @@ async function waitForElement(page: Page, selector: string, timeout = 5000): Pro
   }
 }
 
+// Amazon has shipped several DOM variants over the years so try a few
+// selectors and fall back to submitting the form directly via Enter.
+async function submitSearch(page: Page): Promise<void> {
+  const submitSelectors = [
+    '#nav-search-submit-button',
+    '#nav-search-submit-text input[type="submit"]',
+    '.nav-search-submit input[type="submit"]',
+    'form[name="site-search"] input[type="submit"]',
+  ];
+
+  for (const selector of submitSelectors) {
+    const btn = await page.$(selector);
+    if (btn) {
+      await btn.click();
+      return;
+    }
+  }
+
+  await page.focus('#twotabsearchtextbox');
+  await page.keyboard.press('Enter');
+}
+
 export async function searchProducts(query: string): Promise<OperationResult> {
   try {
     const page = await getPage();
@@ -24,7 +46,7 @@ export async function searchProducts(query: string): Promise<OperationResult> {
     // Search for product
     await page.waitForSelector('#twotabsearchtextbox');
     await page.type('#twotabsearchtextbox', query);
-    await page.click('#nav-search-submit-button');
+    await submitSearch(page);
 
     await page.waitForSelector('[data-component-type="s-search-result"]');
 
@@ -81,7 +103,7 @@ export async function addToCart(params: AddToCartParams): Promise<OperationResul
       await page.goto(BASE_URL, { waitUntil: 'networkidle2' });
       await page.waitForSelector('#twotabsearchtextbox');
       await page.type('#twotabsearchtextbox', params.query);
-      await page.click('#nav-search-submit-button');
+      await submitSearch(page);
 
       await page.waitForSelector('[data-component-type="s-search-result"] h2 a');
       await page.click('[data-component-type="s-search-result"] h2 a');
